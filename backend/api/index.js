@@ -28,8 +28,28 @@ app.use('/api/farmers', require('../routes/farmers'));
 app.use('/api/chat', require('../routes/chat'));
 app.use('/api/ai', require('../routes/ai'));
 
-// Health check
-app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+// Health check and root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    message: 'AgroConnect API is running!',
+    version: '1.0.0',
+    status: 'healthy',
+    endpoints: [
+      'GET /api/products',
+      'POST /api/auth/send-otp',
+      'POST /api/auth/verify-otp',
+      'GET /api/farmers/nearby',
+      'POST /api/orders',
+      'GET /api/orders/:id',
+      'POST /api/ai/grade-image',
+      'POST /api/chat/message'
+    ]
+  });
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected' });
+});
 
 // Setup HTTP server for Socket.io
 const server = http.createServer(app);
