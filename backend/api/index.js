@@ -14,11 +14,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+if (process.env.MONGODB_URI) {
+  mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log('MongoDB connected'))
+    .catch(err => console.error('MongoDB connection error:', err));
+} else {
+  console.error('CRITICAL: MONGODB_URI is not defined in the environment variables.');
+}
 
 // Routes
 app.use('/api/auth', require('../routes/auth'));
